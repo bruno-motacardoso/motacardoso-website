@@ -1,5 +1,5 @@
 ## Context
-Personal portfolio website. Purpose: present me (Bruno Mota Cardoso) and my projects to recruiters and potential collaborators.
+Personal portfolio website. Purpose: present me (Bruno Mota Cardoso) and my projects to recruiters and potential collaborators. The website must be easy to maintain. The idea is to have a long-term website.
 
 ## Stack
 - Vanilla, no dependencies.
@@ -20,7 +20,7 @@ Personal portfolio website. Purpose: present me (Bruno Mota Cardoso) and my proj
 - Never add a dependency without justifying it
 - Never modify [package.json / .env / deploy config] without explicit approval
 
-## Project Sections
+## Website Sections
 - Hero: name, tagline, one-liner about what I do
 - Track record: list of projects and achievments, each with problem/approach/result
 - Contact: book a call + linkedin link

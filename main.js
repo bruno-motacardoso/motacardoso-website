@@ -1,16 +1,37 @@
-
 document.addEventListener('DOMContentLoaded', () => {
-  // ROTATING TEXT ANIMATION
+  // NAVBAR HIDE/REVEAL ON SCROLL
+  const nav = document.querySelector('nav');
+  const hero = document.getElementById('hero');
+  
+  nav.classList.add('nav-hidden');
 
+  if (hero) {
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          nav.classList.remove('nav-visible');
+          nav.classList.add('nav-hidden');
+        } else {
+          nav.classList.remove('nav-hidden');
+          nav.classList.add('nav-visible');
+        }
+      });
+    }, {
+      threshold: 0,
+      rootMargin: '-80px 0px 0px 0px'
+    });
+
+    navObserver.observe(hero);
+  }
+
+  // ROTATING TEXT ANIMATION
   let words = document.querySelectorAll(".word");
   words.forEach(word => {
-    let letters = word.textContent.split(" ");
+    let wordParts = word.textContent.split(" ");
     word.textContent = "";
-    letters.forEach(letter => {
+    wordParts.forEach(part => {
       let span = document.createElement("span");
-      // span.textContent = letter === " " ? "\u00A0" : letter;  // ← keep spaces
-
-      span.textContent = letter;
+      span.textContent = part;
       span.className = "letter";
       word.append(span);
     });
@@ -24,13 +45,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentWord = words[currentWordIndex];
     let nextWord =
       currentWordIndex === maxWordIndex ? words[0] : words[currentWordIndex + 1];
-    // rotate out letters of current word
     Array.from(currentWord.children).forEach((letter, i) => {
       setTimeout(() => {
         letter.className = "letter out";
       }, i * 80);
     });
-    // reveal and rotate in letters of next word
     nextWord.style.opacity = "1";
     Array.from(nextWord.children).forEach((letter, i) => {
       letter.className = "letter behind";
@@ -43,33 +62,57 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   rotateText();
-  setInterval(rotateText, 4000);
+  let rotateInterval = setInterval(rotateText, 4000);
 
+  // Pause when tab is hidden to save resources
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      clearInterval(rotateInterval);
+    } else {
+      rotateInterval = setInterval(rotateText, 4000);
+    }
+  });
 
+  // SCROLL-TRIGGERED CARD ANIMATION
+  const animateCards = document.querySelectorAll('.card-animate');
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, index) => {
+      if (entry.isIntersecting) {
+        // Stagger: 100ms delay per card
+        setTimeout(() => {
+          entry.target.classList.add('card-visible');
+        }, index * 100);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.15,
+    rootMargin: '0px 0px -50px 0px'
+  });
 
+  animateCards.forEach(card => {
+    observer.observe(card);
+  });
 
   // SVG CURVE ANIMATION
-  // Variables
   var $curve = document.getElementById("curve");
   var last_known_scroll_position = 0;
-  var defaultCurveValue = 350;
+  var defaultCurveValue = 100;
   var curveRate = 3;
   var ticking = false;
   var curveValue;
 
-  // Handle the functionality
   function scrollEvent(scrollPos) {
     if (scrollPos >= 0 && scrollPos < defaultCurveValue) {
       curveValue = defaultCurveValue - parseFloat(scrollPos / curveRate);
       $curve.setAttribute(
         "d",
-        "M 800 300 Q 400 " + curveValue + " 0 300 L 0 0 L 800 0 L 800 300 Z"
+        "M 800 0 Q 400 " + curveValue + " 0 0 L 0 0 L 800 0 L 800 0 Z"
       );
     }
   }
 
-  // Scroll Listener
-  // https://developer.mozilla.org/en-US/docs/Web/Events/scroll
   window.addEventListener("scroll", function(e) {
     last_known_scroll_position = window.scrollY;
 
